@@ -37,6 +37,9 @@ class BurgerBuilder extends Component {
 
     removeIngredientHandler = (type) => {
         const oldCount = this.state.ingredients[type];
+        if (oldCount <= 0) {
+            return; //escape if user attempts to remove non-existent elements, causing crash
+        }
         const updatedCount = oldCount - 1;
         const updatedIngredients = {
             ...this.state.ingredients
@@ -49,12 +52,20 @@ class BurgerBuilder extends Component {
     }
 
     render () {
+        const disabledInfo = {
+            ...this.state.ingredients
+        };
+        for (let key in disabledInfo) {
+            disabledInfo[key] = disabledInfo[key] <= 0
+            // form of {salad: true, meat: false, ...}
+        }
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls 
                     ingredientAdded={this.addingIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler} />
+                    ingredientRemoved={this.removeIngredientHandler} 
+                    disabled={disabledInfo} />
             </Aux>
         );
     }
